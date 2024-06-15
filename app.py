@@ -14,7 +14,7 @@ abi = contract_data['abi']
 bytecode = contract_data['bytecode']
 
 # Set up Web3 connection (replace with your local Ganache RPC endpoint)
-w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:7545'))
+w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
 
 # Get the first account from Ganache
 account = w3.eth.accounts[0]
