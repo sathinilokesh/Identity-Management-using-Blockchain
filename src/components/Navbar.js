@@ -1,17 +1,21 @@
+// Navbar.js
+
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Navbar.css';
 
-const Navbar = () => {
+function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-brand">Identity Management DApp</div>
       <ul className="navbar-links">
-        <li><a href="#register">Register Identity</a></li>
-        <li><a href="#get">Get Identity</a></li>
-        <li><a href="#update">Update Identity</a></li>
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="/register">Register</Link></li>
+        <li><Link to="/getIdentity">Get Identity</Link></li>
+        <li><Link to="/updateIdentity">Update Identity</Link></li>
       </ul>
     </nav>
   );
-};
+}
 
 export default Navbar;
