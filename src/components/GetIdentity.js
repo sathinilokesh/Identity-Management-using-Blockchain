@@ -1,5 +1,3 @@
-// GetIdentity.js
-
 import React, { useState } from 'react';
 import './GetIdentity.css'; // Import the CSS file for styling
 

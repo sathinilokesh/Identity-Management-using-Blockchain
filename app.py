@@ -4,7 +4,7 @@ from web3 import Web3
 import json
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS
+CORS(app)
 
 # Load the contract ABI and bytecode
 with open('artifacts/contracts/Identity.sol/Identity.json') as f:
@@ -14,9 +14,9 @@ abi = contract_data['abi']
 bytecode = contract_data['bytecode']
 
 # Set up Web3 connection (replace with your local Ganache RPC endpoint)
-w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
+w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:7545'))
 
-# Get the first account from Ganache
+# Get the first account from Ganache (optional, but useful for contract deployment)
 account = w3.eth.accounts[0]
 
 # Contract deployment function
@@ -28,7 +28,7 @@ def deploy_contract():
 
 # Deploy the contract
 contract_address = deploy_contract()
-print("contract address: " + contract_address)
+print("Contract address:", contract_address)
 
 # Create contract instance
 contract = w3.eth.contract(address=contract_address, abi=abi)
@@ -43,9 +43,10 @@ def register_identity():
     name = data['name']
     email = data['email']
     phone = data['phone']
+    user_address = data['user_address']  # Get user address from MetaMask
 
     # Send transaction to register identity
-    tx_hash = contract.functions.registerIdentity(name, email, phone).transact({'from': account})
+    tx_hash = contract.functions.registerIdentity(name, email, phone).transact({'from': user_address})
     receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
 
     return jsonify({'status': 'Identity registered', 'transaction': receipt.transactionHash.hex()})
@@ -61,9 +62,10 @@ def update_identity():
     name = data['name']
     email = data['email']
     phone = data['phone']
+    user_address = data['user_address']  # Get user address from MetaMask
 
     # Send transaction to update identity
-    tx_hash = contract.functions.updateIdentity(name, email, phone).transact({'from': account})
+    tx_hash = contract.functions.updateIdentity(name, email, phone).transact({'from': user_address})
     receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
 
     return jsonify({'status': 'Identity updated', 'transaction': receipt.transactionHash.hex()})
