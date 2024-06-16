@@ -51,10 +51,10 @@ const UpdateIdentity = () => {
   return (
     <div className='update-identity' >
       <h2>Update Identity</h2>
+      <input type="text" placeholder="User Address" className='input-field' value={userAddress} onChange={(e) => setUserAddress(e.target.value)} />
       <input type="text" placeholder="Name" className='input-field' value={name} onChange={(e) => setName(e.target.value)} />
       <input type="email" placeholder="Email" className='input-field' value={email} onChange={(e) => setEmail(e.target.value)} />
       <input type="text" placeholder="Phone" className='input-field' value={phone} onChange={(e) => setPhone(e.target.value)} />
-      <input type="text" placeholder="User Address" className='input-field' value={userAddress} onChange={(e) => setUserAddress(e.target.value)} />
       <button className='btn-update' onClick={updateIdentity}>Update</button>
     </div>
   );
