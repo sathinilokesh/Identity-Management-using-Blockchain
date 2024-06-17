@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Register.css";
 
-const Register = () => {
+const Register = ({ account }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -13,7 +13,7 @@ const Register = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, phone }),
+        body: JSON.stringify({ name, email, phone, user_address: account }),
       });
       const data = await response.json();
       alert("Transaction Hash: " + data.transaction);
