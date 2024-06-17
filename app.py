@@ -4,7 +4,7 @@ from web3 import Web3
 import json
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Enable CORS
 
 # Load the contract ABI and bytecode
 with open('artifacts/contracts/Identity.sol/Identity.json') as f:
@@ -14,10 +14,13 @@ abi = contract_data['abi']
 bytecode = contract_data['bytecode']
 
 # Set up Web3 connection (replace with your local Ganache RPC endpoint)
-w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:7545'))
+w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
 
-# Get the first account from Ganache (optional, but useful for contract deployment)
+# Get the first account from Ganache
 account = w3.eth.accounts[0]
+
+# Convert account to checksum format
+account = Web3.to_checksum_address(account)
 
 # Contract deployment function
 def deploy_contract():
@@ -28,7 +31,7 @@ def deploy_contract():
 
 # Deploy the contract
 contract_address = deploy_contract()
-print("Contract address:", contract_address)
+print("contract address: " + contract_address)
 
 # Create contract instance
 contract = w3.eth.contract(address=contract_address, abi=abi)
@@ -43,7 +46,10 @@ def register_identity():
     name = data['name']
     email = data['email']
     phone = data['phone']
-    user_address = data['user_address']  # Get user address from MetaMask
+    user_address = data['user_address']
+
+    # Convert user address to checksum format
+    user_address = Web3.to_checksum_address(user_address)
 
     # Send transaction to register identity
     tx_hash = contract.functions.registerIdentity(name, email, phone).transact({'from': user_address})
@@ -53,6 +59,9 @@ def register_identity():
 
 @app.route('/identity/<user_address>', methods=['GET'])
 def get_identity(user_address):
+    # Convert user address to checksum format
+    user_address = Web3.to_checksum_address(user_address)
+    
     identity = contract.functions.getIdentity(user_address).call()
     return jsonify({'name': identity[0], 'email': identity[1], 'phone': identity[2]})
 
@@ -62,7 +71,10 @@ def update_identity():
     name = data['name']
     email = data['email']
     phone = data['phone']
-    user_address = data['user_address']  # Get user address from MetaMask
+    user_address = data['user_address']
+
+    # Convert user address to checksum format
+    user_address = Web3.to_checksum_address(user_address)
 
     # Send transaction to update identity
     tx_hash = contract.functions.updateIdentity(name, email, phone).transact({'from': user_address})

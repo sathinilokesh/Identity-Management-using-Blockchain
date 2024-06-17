@@ -1,35 +1,44 @@
+// MetaMaskLogin.js
+
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import './MetaMaskLogin.css'; // Import the CSS file for styling
 
-const MetaMaskLogin = ({ onLogin }) => {
-  const [account, setAccount] = useState('');
-
-  useEffect(() => {
-    if (window.ethereum) {
-      window.web3 = new Web3(window.ethereum);
-    } else {
-      console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
-    }
-  }, []);
+const MetaMaskLogin = ({ setAccount }) => {
+  const [error, setError] = useState(null);
 
   const connectMetaMask = async () => {
-    try {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      setAccount(accounts[0]);
-      onLogin(accounts[0]);
-    } catch (error) {
-      console.error('Error connecting to MetaMask:', error);
+    if (window.ethereum) {
+      try {
+        const web3 = new Web3(window.ethereum);
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const checksummedAddress = web3.utils.toChecksumAddress(accounts[0]);
+        setAccount(checksummedAddress);
+        setError(null);
+      } catch (error) {
+        setError('Failed to connect to MetaMask');
+      }
+    } else {
+      setError('MetaMask is not installed');
     }
   };
 
+  useEffect(() => {
+    if (window.ethereum && window.ethereum.selectedAddress) {
+      const web3 = new Web3(window.ethereum);
+      const checksummedAddress = web3.utils.toChecksumAddress(window.ethereum.selectedAddress);
+      setAccount(checksummedAddress);
+    }
+  }, [setAccount]);
+
   return (
     <div className="metamask-login">
-      {account ? (
-        <p>Connected account: {account}</p>
+      {window.ethereum && window.ethereum.selectedAddress ? (
+        <p className="connected-account">Connected account: {window.ethereum.selectedAddress}</p>
       ) : (
         <button onClick={connectMetaMask} className="btn-connect-metamask">Connect MetaMask</button>
       )}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };
