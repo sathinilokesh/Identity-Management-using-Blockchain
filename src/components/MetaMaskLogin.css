@@ -1,36 +1,20 @@
-/* MetaMaskLogin.css */
-
 .metamask-login {
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  .btn-connect-metamask {
-    background-color: #f0b90b;
-    color: #222;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-    outline: none;
-    transition: background-color 0.3s ease;
-  }
-  
-  .btn-connect-metamask:hover {
-    background-color: #d9a300;
-  }
-  
-  .connected-account {
-    margin-top: 10px;
-    font-size: 16px;
-    font-weight: bold;
-  }
-  
-  @media screen and (max-width: 768px) {
-    .btn-connect-metamask {
-      font-size: 14px;
-      padding: 8px 16px;
-    }
-  }
-  
+  text-align: center;
+  margin: 20px 0;
+}
+
+.connected-account {
+  color: green;
+}
+
+.btn-connect-metamask {
+  padding: 10px 20px;
+  background-color: #f6851b;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.error-message {
+  color: red;
+}

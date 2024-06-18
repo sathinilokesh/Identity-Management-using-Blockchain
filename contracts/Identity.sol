@@ -1,31 +1,36 @@
-// SPDX-License-Identifier: MIT
+// Identity.sol
+
 pragma solidity ^0.8.0;
 
 contract Identity {
-    struct IdentityInfo {
+    struct User {
         string name;
         string email;
         string phone;
+        mapping(address => bool) authorizedAddresses;
     }
 
-    mapping(address => IdentityInfo) private identities;
-    event IdentityRegistered(address indexed user, string name, string email, string phone);
-    event IdentityUpdated(address indexed user, string name, string email, string phone);
+    mapping(address => User) private users;
 
-    function registerIdentity(string memory name, string memory email, string memory phone) public {
-        require(bytes(identities[msg.sender].name).length == 0, "Identity already registered.");
-        identities[msg.sender] = IdentityInfo(name, email, phone);
-        emit IdentityRegistered(msg.sender, name, email, phone);
+    function registerIdentity(string memory _name, string memory _email, string memory _phone) public {
+        users[msg.sender].name = _name;
+        users[msg.sender].email = _email;
+        users[msg.sender].phone = _phone;
     }
 
-    function updateIdentity(string memory name, string memory email, string memory phone) public {
-        require(bytes(identities[msg.sender].name).length != 0, "Identity not registered.");
-        identities[msg.sender] = IdentityInfo(name, email, phone);
-        emit IdentityUpdated(msg.sender, name, email, phone);
+    function getIdentity(address _userAddress) public view returns (string memory, string memory, string memory) {
+        require(users[_userAddress].authorizedAddresses[msg.sender], "Not authorized to view this identity");
+        User storage user = users[_userAddress];
+        return (user.name, user.email, user.phone);
     }
 
-    function getIdentity(address _user) public view returns (string memory, string memory, string memory) {
-        IdentityInfo memory identity = identities[_user];
-        return (identity.name, identity.email, identity.phone);
+    function updateIdentity(string memory _name, string memory _email, string memory _phone) public {
+        users[msg.sender].name = _name;
+        users[msg.sender].email = _email;
+        users[msg.sender].phone = _phone;
+    }
+
+    function authorizeAccess(address _askerAddress) public {
+        users[msg.sender].authorizedAddresses[_askerAddress] = true;
     }
 }

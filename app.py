@@ -4,7 +4,7 @@ from web3 import Web3
 import json
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS
+CORS(app)
 
 # Load the contract ABI and bytecode
 with open('artifacts/contracts/Identity.sol/Identity.json') as f:
@@ -13,14 +13,11 @@ with open('artifacts/contracts/Identity.sol/Identity.json') as f:
 abi = contract_data['abi']
 bytecode = contract_data['bytecode']
 
-# Set up Web3 connection (replace with your local Ganache RPC endpoint)
+# Set up Web3 connection
 w3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
 
 # Get the first account from Ganache
-account = w3.eth.accounts[0]
-
-# Convert account to checksum format
-account = Web3.to_checksum_address(account)
+account = Web3.to_checksum_address(w3.eth.accounts[0])
 
 # Contract deployment function
 def deploy_contract():
@@ -46,10 +43,7 @@ def register_identity():
     name = data['name']
     email = data['email']
     phone = data['phone']
-    user_address = data['user_address']
-
-    # Convert user address to checksum format
-    user_address = Web3.to_checksum_address(user_address)
+    user_address = Web3.to_checksum_address(data['user_address'])
 
     # Send transaction to register identity
     tx_hash = contract.functions.registerIdentity(name, email, phone).transact({'from': user_address})
@@ -59,10 +53,11 @@ def register_identity():
 
 @app.route('/identity/<user_address>', methods=['GET'])
 def get_identity(user_address):
-    # Convert user address to checksum format
     user_address = Web3.to_checksum_address(user_address)
-    
-    identity = contract.functions.getIdentity(user_address).call()
+    account = request.args.get('account')
+    account = Web3.to_checksum_address(account)
+
+    identity = contract.functions.getIdentity(user_address).call({'from': account})
     return jsonify({'name': identity[0], 'email': identity[1], 'phone': identity[2]})
 
 @app.route('/update', methods=['POST'])
@@ -71,16 +66,25 @@ def update_identity():
     name = data['name']
     email = data['email']
     phone = data['phone']
-    user_address = data['user_address']
-
-    # Convert user address to checksum format
-    user_address = Web3.to_checksum_address(user_address)
+    user_address = Web3.to_checksum_address(data['user_address'])
 
     # Send transaction to update identity
     tx_hash = contract.functions.updateIdentity(name, email, phone).transact({'from': user_address})
     receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
 
     return jsonify({'status': 'Identity updated', 'transaction': receipt.transactionHash.hex()})
+
+@app.route('/authorize', methods=['POST'])
+def authorize_access():
+    data = request.json
+    user_address = Web3.to_checksum_address(data['user_address'])
+    asker_address = Web3.to_checksum_address(data['asker_address'])
+
+    # Send transaction to authorize access
+    tx_hash = contract.functions.authorizeAccess(asker_address).transact({'from': user_address})
+    receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+
+    return jsonify({'status': 'Access authorized', 'transaction': receipt.transactionHash.hex()})
 
 if __name__ == '__main__':
     app.run(port=5000)

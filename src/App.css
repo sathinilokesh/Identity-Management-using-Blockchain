@@ -1,59 +1,18 @@
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f7f6;
-  margin: 0;
-  padding: 0;
-}
-
-.App {
-  background: #fff;
-  padding: 20px 25px;
-  border-radius: 8px;
-  box-shadow: 0 1px 1px rgba(0,0,0,0.15);
-  max-width: 600px;
-  margin: 20px auto;
-}
-
-h2 {
-  color: #555;
+.input-address {
   margin-bottom: 10px;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 5px;
 }
 
-input {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  box-sizing: border-box;
-}
-
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #5bc0de;
+.btn-get-identity, .btn-fetch-data, .btn-update-identity, .btn-authorize-access {
+  background-color: #4CAF50;
+  color: white;
   border: none;
-  border-radius: 5px;
-  color: #fff;
-  font-size: 16px;
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #31b0d5;
+.identity-details {
+  margin-top: 20px;
 }
 
-.identity-info {
-  background: #f9f9f9;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-top: 10px;
-}
-
-.section {
-  margin-bottom: 20px;
+.identity-details p {
+  margin: 5px 0;
 }

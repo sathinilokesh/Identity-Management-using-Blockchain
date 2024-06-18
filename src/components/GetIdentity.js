@@ -1,28 +1,22 @@
 // GetIdentity.js
 
 import React, { useState } from 'react';
-import MetaMaskLogin from './MetaMaskLogin';
 import './GetIdentity.css';
 
-const GetIdentity = () => {
+const GetIdentity = ({ account }) => {
+  const [userAddress, setUserAddress] = useState('');
   const [identity, setIdentity] = useState(null);
   const [error, setError] = useState(null);
-  const [account, setAccount] = useState(null);
 
   const getIdentity = async () => {
-    if (!account) {
-      alert('Please connect MetaMask first');
-      return;
-    }
-
     try {
-      const response = await fetch(`http://127.0.0.1:5000/identity/${account}`);
+      const response = await fetch(`http://127.0.0.1:5000/identity/${userAddress}?account=${account}`);
       if (!response.ok) {
         throw new Error('Failed to fetch identity.');
       }
       const data = await response.json();
       setIdentity(data);
-      setError(null);
+      setError(null); // Clear any previous error
     } catch (error) {
       console.error('Error:', error);
       setError('Failed to fetch identity. Please check the address.');
@@ -31,10 +25,16 @@ const GetIdentity = () => {
 
   return (
     <div className='identity-info'>
-      <MetaMaskLogin setAccount={setAccount} />
       <h2>Get Identity</h2>
+      <input
+        type="text"
+        placeholder="User Address"
+        value={userAddress}
+        onChange={(e) => setUserAddress(e.target.value)}
+        className="input-address"
+      />
       <button onClick={getIdentity} className="btn-get-identity">Get Identity</button>
-      {error && <p className="error-message">{error}</p>}
+      {error && <div className="error-message">{error}</div>}
       {identity && (
         <div className="identity-details">
           <p><strong>Name:</strong> {identity.name}</p>
